@@ -3,12 +3,12 @@ from threading import Thread
 
 class Worker(object):
 
-    def __init__(self, num_workers=1):
+    def __init__(self, task, num_workers=1):
         self.num_workers = num_workers
+        self.task = task
 
-    def start_worker(self, task, args):
-        args = args or ()
+    def start(self):
         for i in range(self.num_workers):
-            t = Thread(target=task, args=args)
+            t = Thread(target=self.task)
             t.daemon = True
             t.start()
