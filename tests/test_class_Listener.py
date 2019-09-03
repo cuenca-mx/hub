@@ -7,9 +7,8 @@ from moto import mock_kinesis
 from hub.kinesis.listener import Listener
 from hub.workers.class_worker import Worker
 
-stream_name_request = "my_stream"
-stream_name_response = 'my_stream_response'
-arg = (stream_name_request, 3)
+stream_name = 'cuenca.api_keys'
+arg = (stream_name, 3)
 
 
 def process_records(records):
@@ -23,7 +22,7 @@ def test_class_listener():
     client = boto3.client('kinesis', region_name='us-east-2')
     created_at = datetime.utcnow() - timedelta(hours=2)
 
-    client.create_stream(StreamName=stream_name_request, ShardCount=1)
+    client.create_stream(StreamName=stream_name, ShardCount=1)
 
     data = {'card_hash': (
         '6f3760fceb635962f8d8047d70d475361063624370f76c61c067ff666dc593'
@@ -39,12 +38,10 @@ def test_class_listener():
         'created_at': created_at.isoformat() + 'Z'}
 
     for index in range(5):
-        client.put_record(StreamName=stream_name_request,
+        client.put_record(StreamName=stream_name,
                           Data=json.dumps(data),
                           PartitionKey=str(index))
-
-    consumer = Listener(stream_name_request, stream_name_response,
-                        process_records, 3)
+    consumer = Listener(stream_name, process_records, 2)
 
     resp = consumer.run()
 
