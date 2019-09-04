@@ -8,12 +8,11 @@ from hub.kinesis.client_kinesis import client
 def put_response(response, stream_name: str):
     input_data = json.dumps(response)
     partition_key = '{}-{}'.format(
-        stream_name + '.response',
-        str(datetime.now().isoformat() + 'Z').replace(' ', '-'))
+        stream_name, str(datetime.now().isoformat() + 'Z').replace(' ', '-'))
 
     try:
         client.put_record(
-            StreamName=stream_name + '.response',
+            StreamName=stream_name,
             Data=input_data,
             PartitionKey=partition_key
         )

@@ -7,7 +7,7 @@ from moto import mock_kinesis
 from hub.kinesis.listener import Listener
 from hub.workers.class_worker import Worker
 
-stream_name = 'cuenca.api_keys'
+stream_name = 'cuenca.api_keys.request'
 arg = (stream_name, 3)
 
 
@@ -41,6 +41,9 @@ def test_class_listener():
         client.put_record(StreamName=stream_name,
                           Data=json.dumps(data),
                           PartitionKey=str(index))
+
+    import pdb
+    pdb.set_trace()
     consumer = Listener(stream_name, process_records, 2)
 
     resp = consumer.run()
