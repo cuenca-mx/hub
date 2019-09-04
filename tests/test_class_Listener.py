@@ -42,8 +42,6 @@ def test_class_listener():
                           Data=json.dumps(data),
                           PartitionKey=str(index))
 
-    import pdb
-    pdb.set_trace()
     consumer = Listener(stream_name, process_records, 2)
 
     resp = consumer.run()
