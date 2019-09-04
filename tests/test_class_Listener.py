@@ -4,13 +4,14 @@ import json
 import boto3
 from moto import mock_kinesis
 
-from hub.kinesis.listener import Listener
-from hub.workers.class_worker import Worker
+from hub.kinesis.utils import kinesis
 
 stream_name = 'cuenca.api_keys.request'
 arg = (stream_name, 3)
 
 
+def test_kinesis():
+@kinesis(stream_name)
 def process_records(records):
     for record in records:
         data_card = json.loads(record['Data'])
@@ -41,11 +42,4 @@ def test_class_listener():
         client.put_record(StreamName=stream_name,
                           Data=json.dumps(data),
                           PartitionKey=str(index))
-
-    consumer = Listener(stream_name, process_records, 2)
-
-    resp = consumer.run()
-
-    worker = Worker(resp)
-    worker.start()
-    assert resp is None
+    return client
