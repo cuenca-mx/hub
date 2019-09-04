@@ -10,7 +10,6 @@ stream_name = 'cuenca.api_keys.request'
 arg = (stream_name, 3)
 
 
-def test_kinesis():
 @kinesis(stream_name)
 def process_records(records):
     for record in records:
