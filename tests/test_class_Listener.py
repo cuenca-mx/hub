@@ -10,13 +10,6 @@ stream_name = 'cuenca.api_keys.request'
 arg = (stream_name, 3)
 
 
-@kinesis(stream_name)
-def process_records(records):
-    for record in records:
-        data_card = json.loads(record['Data'])
-        return data_card
-
-
 @mock_kinesis
 def test_class_listener():
     client = boto3.client('kinesis', region_name='us-east-2')
@@ -41,4 +34,11 @@ def test_class_listener():
         client.put_record(StreamName=stream_name,
                           Data=json.dumps(data),
                           PartitionKey=str(index))
-    return client
+
+    @kinesis(stream_name)
+    def process_records(records):
+        for record in records:
+            data_card = json.loads(record['Data'])
+            return data_card
+
+    return None
