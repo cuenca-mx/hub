@@ -6,7 +6,7 @@ from moto import mock_kinesis
 
 from hub.kinesis.utils import kinesis
 
-stream_name = 'cuenca.api_keys.request'
+stream_name = 'cuenca.api_keys'
 arg = (stream_name, 3)
 
 
@@ -15,7 +15,7 @@ def test_class_listener():
     client = boto3.client('kinesis', region_name='us-east-2')
     created_at = datetime.utcnow() - timedelta(hours=2)
 
-    client.create_stream(StreamName=stream_name, ShardCount=1)
+    client.create_stream(StreamName='cuenca.api_keys.request', ShardCount=1)
 
     data = {'card_hash': (
         '6f3760fceb635962f8d8047d70d475361063624370f76c61c067ff666dc593'
@@ -31,11 +31,11 @@ def test_class_listener():
         'created_at': created_at.isoformat() + 'Z'}
 
     for index in range(5):
-        client.put_record(StreamName=stream_name,
+        client.put_record(StreamName='cuenca.api_keys.request',
                           Data=json.dumps(data),
                           PartitionKey=str(index))
 
-    @kinesis(stream_name)
+    @kinesis()
     def process_records(records):
         for record in records:
             data_card = json.loads(record['Data'])

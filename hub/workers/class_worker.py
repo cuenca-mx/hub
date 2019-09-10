@@ -1,14 +1,17 @@
 from threading import Thread
 
+from hub.kinesis.listener import Listener
+
 
 class Worker(object):
 
-    def __init__(self, task, num_workers=1):
+    def __init__(self, num_workers=1):
         self.num_workers = num_workers
-        self.task = task
 
     def start(self):
         for i in range(self.num_workers):
-            t = Thread(target=self.task)
+            listener = Listener()
+            task = listener.run()
+            t = Thread(target=task)
             t.daemon = True
             t.start()
