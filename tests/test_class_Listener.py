@@ -4,7 +4,9 @@ import json
 import boto3
 from moto import mock_kinesis
 
+from hub.kinesis import Listener
 from hub.kinesis.utils import kinesis
+from hub.workers import Worker
 
 stream_name = 'cuenca.api_keys'
 arg = (stream_name, 3)
@@ -24,8 +26,7 @@ def test_class_listener():
         'status_authorization': 'pending',
         'affiliation': '',
         'authorizer_number': '327634',
-        'merchant_name':
-            'NETFLIX               MEXICO DF    000MX',
+        'merchant_name': 'NETFLIX MEXICO DF 000MX',
         'amount': 5600,
         'track_data_method': 'manual',
         'created_at': created_at.isoformat() + 'Z'}
@@ -35,10 +36,11 @@ def test_class_listener():
                           Data=json.dumps(data),
                           PartitionKey=str(index))
 
-    @kinesis()
     def process_records(records):
         for record in records:
             data_card = json.loads(record['Data'])
             return data_card
 
+    listener = Listener("cuenca.api_keys", process_records, 6)
+    listener.run()
     return None
