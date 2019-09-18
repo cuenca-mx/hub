@@ -5,8 +5,6 @@ import boto3
 from moto import mock_kinesis
 
 from hub.kinesis import Listener
-from hub.kinesis.utils import kinesis
-from hub.workers import Worker
 
 stream_name = 'cuenca.api_keys'
 arg = (stream_name, 3)

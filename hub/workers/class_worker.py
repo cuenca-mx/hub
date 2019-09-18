@@ -17,6 +17,6 @@ class Worker(object):
             listener = Listener(
                 self.stream_name, self.process_records, self.tries)
             task = listener.run
-            t = Thread(name="Worker_"+str(i), target=task)
+            t = Thread(target=task)
             t.setDaemon(True)
             t.start()
