@@ -26,8 +26,8 @@ def init_service(include: list):
 
 
 @click.command()
-@click.option("--module", help="Module to search Kinesis Tasks", required=True)
-@click.option("--workers", default=1, help="Number of workers")
+@click.option("--app", help="Module to search Kinesis Tasks", required=True)
+@click.option("-num_workers", default=1, help="Number of workers")
 def cli_hub(app, num_workers):
     """
     Command Line Interface to Start Workers
