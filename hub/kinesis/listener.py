@@ -37,7 +37,7 @@ class Listener:
                 records = response['Records']
 
                 if records:
-                    resp = self.process_records(records)
+                    resp = self.process_records(records[0])
                     put_response(resp, self.stream_name_response)
 
                 next_iterator = response['NextShardIterator']
