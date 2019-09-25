@@ -11,11 +11,12 @@ def put_response(response, stream_name: str):
         stream_name, str(datetime.now().isoformat() + 'Z').replace(' ', '-'))
 
     try:
-        client.put_record(
+        response = client.put_record(
             StreamName=stream_name,
             Data=input_data,
             PartitionKey=partition_key
         )
+        return response
 
     except client.exceptions.ResourceNotFoundException:
         time.sleep(1)

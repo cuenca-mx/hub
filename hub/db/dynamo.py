@@ -3,20 +3,22 @@ import boto3
 import time
 
 KINESIS_DYNAMO_TABLE = os.environ['KINESIS_DYNAMO_TABLE']
-KINESIS_TTL_HOURS = os.environ['KINESIS_TTL_HOURS']
+KINESIS_TTL_HOURS = os.getenv('KINESIS_TTL_HOURS', 24)
 ACCESS_KEY = os.environ['ACCESS_KEY']
 SECRET_KEY = os.environ['SECRET_KEY']
 REGION_NAME = os.environ['REGION_NAME']
 
-client_dynamo = boto3.client('dynamodb', region_name=REGION_NAME,
-                             aws_access_key_id=ACCESS_KEY,
-                             aws_secret_access_key=SECRET_KEY)
+client = boto3.client('dynamodb', region_name=REGION_NAME,
+                      aws_access_key_id=ACCESS_KEY,
+                      aws_secret_access_key=SECRET_KEY)
 
 
 def write_to_db(key):
     try:
+        import pdb
+        pdb.set_trace()
         ttl = int(time.time() + float(KINESIS_TTL_HOURS) * 3600)
-        response = client_dynamo.put_item(
+        response = client.put_item(
             TableName=KINESIS_DYNAMO_TABLE,
             Item={
                 'uuid': {'S': key},
@@ -29,7 +31,7 @@ def write_to_db(key):
         if old_value is not None:
             print('Duplicado: ', old_value)
             # Reset old value
-            client_dynamo.put_item(
+            client.put_item(
                 TableName=KINESIS_DYNAMO_TABLE,
                 Item=old_value
             )
