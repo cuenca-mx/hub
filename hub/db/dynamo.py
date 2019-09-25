@@ -15,8 +15,6 @@ client = boto3.client('dynamodb', region_name=REGION_NAME,
 
 def write_to_db(key):
     try:
-        import pdb
-        pdb.set_trace()
         ttl = int(time.time() + float(KINESIS_TTL_HOURS) * 3600)
         response = client.put_item(
             TableName=KINESIS_DYNAMO_TABLE,
@@ -28,7 +26,7 @@ def write_to_db(key):
         )
         # Validate previously inserted
         old_value = response.get("Attributes")
-        if old_value is not None:
+        if old_value is not None and old_value != {}:
             print('Duplicado: ', old_value)
             # Reset old value
             client.put_item(
