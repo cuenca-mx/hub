@@ -4,7 +4,7 @@ from hub.db.dynamo import write_to_db, KINESIS_DYNAMO_TABLE
 
 
 @mock_dynamodb2
-def test_responser():
+def test_write_to_db():
     client = boto3.client('dynamodb', region_name='us-east-2')
 
     client.create_table(
@@ -17,9 +17,14 @@ def test_responser():
     )
 
     transaction = "f3296986-ded8-11e9-8000-000000000000"
-
     unique: bool = write_to_db(transaction)
     assert unique
     # Duplicated Transaction
     unique = write_to_db(transaction)
     assert not unique
+
+
+def test_service_not_available():
+    transaction = "f3296986-ded8-11e9-8000-000000000000"
+    ok: bool = write_to_db(transaction)
+    assert not ok
