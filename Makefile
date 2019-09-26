@@ -11,10 +11,11 @@ venv:
 		pip install -qU pip
 
 install-test:
-		pip install -q .[test]
+		pip install -r requirements-test.txt
+
 
 test: clean install-test lint
-		coverage run --source heimdall -m py.test
+		coverage run --source hub -m py.test
 		coverage report -m
 		coveralls
 
