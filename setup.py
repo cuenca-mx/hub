@@ -8,7 +8,6 @@ test_requires = [
     'pytest>=4.2.1,<4.3.0'
     'pycodestyle'
     'coveralls'
-    'pyyaml'
     'moto==1.3.13'
 ]
 

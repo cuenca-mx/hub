@@ -1,6 +1,4 @@
-from importlib import import_module
 import types
-import click
 from jsonpickle import json
 
 from hub.kinesis.data_kinesis import DataKinesis
@@ -58,19 +56,3 @@ def task_selector(tasks):
         return task(request)
 
     return exec_task
-
-
-@click.command()
-@click.option("--app", help="Module to search Kinesis Tasks", required=True)
-@click.option("--num_workers", default=1, help="Number of workers")
-def cli_hub(app, num_workers):
-    """
-    Command Line Interface to Start Workers
-    """
-    print("Module Selected for Kinesis App: ", app)
-    print("Workers: ", num_workers)
-    try:
-        module = import_module(app)
-        init_workers(module, num_workers)
-    except ModuleNotFoundError:
-        print("Exited: Module Not Found Error")

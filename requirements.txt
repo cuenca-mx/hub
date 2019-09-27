@@ -1,2 +1,2 @@
-click>=6.7,<6.8
+jsonpickle
 boto3>=1.9.84,<2.0

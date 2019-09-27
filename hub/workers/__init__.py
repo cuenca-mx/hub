@@ -1,1 +1,1 @@
-from .class_worker import Worker
+from .worker import Worker

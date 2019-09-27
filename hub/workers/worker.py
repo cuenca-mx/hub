@@ -11,6 +11,7 @@ class Worker(object):
         self.stream_name = stream_name
         self.process_records = process_records
         self.tries = tries
+        self.threads = []
 
     def start(self):
         for i in range(self.num_workers):
@@ -20,3 +21,4 @@ class Worker(object):
             t = Thread(target=task)
             t.setDaemon(True)
             t.start()
+            self.threads.append(t)
