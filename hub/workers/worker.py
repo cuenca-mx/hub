@@ -22,3 +22,4 @@ class Worker(object):
             t.setDaemon(True)
             t.start()
             self.threads.append(t)
+        return self.threads

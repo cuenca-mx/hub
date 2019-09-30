@@ -18,5 +18,12 @@ def test_create_stream():
     client = boto3.client('kinesis', region_name='us-east-2')
     status = create_stream(STREAM)
     assert status == "ACTIVE"
+
+    # Try to duplicate streams
+    status = create_stream(STREAM)
+    assert status == "ACTIVE"
+
+    # Only one has been created
     list_stream = client.list_streams().get("StreamNames")
     assert STREAM in list_stream
+    assert len(list_stream) == 1
