@@ -1,6 +1,7 @@
 import setuptools
 
 install_requirements = [
+    'jsonpickle'
     'boto3>=1.9.84,<2.0'
 ]
 
@@ -9,6 +10,7 @@ test_requires = [
     'pycodestyle'
     'coveralls'
     'moto==1.3.13'
+    'jsonpickle'
 ]
 
 setuptools.setup(

@@ -1,7 +1,4 @@
 import types
-from jsonpickle import json
-
-from hub.kinesis.data_kinesis import DataKinesis
 from hub.workers import Worker
 
 
@@ -11,13 +8,12 @@ def init_workers(module, num_workers):
     Assign a group of functions
     """
     streams = find_decorated_functions(module)
-    for stream, functions in streams.items():
-        selector = task_selector(functions)
-        w = Worker(stream, selector, None, num_workers)
+    workers_created = []
+    for stream, task_list in streams.items():
+        w = Worker(stream, task_list, None, num_workers)
         w.start()
-    # Maintain live daemons
-    while True:
-        pass
+        workers_created.append(w)
+    return workers_created
 
 
 def find_decorated_functions(module):
@@ -46,18 +42,3 @@ def find_decorated_functions(module):
                 group_functions[name] = obj_module
                 streams[kinesis_stream] = group_functions
     return streams
-
-
-def task_selector(tasks):
-    """
-       Wrapped Function to select the function to execute for new Records
-       "Data.task" indicates the name of the function
-    """
-    def exec_task(record):
-        request: DataKinesis = json.loads(record.get("Data").decode())
-        name_task = request.get("task", "")
-        task = tasks.get(name_task, None)
-        if task is None:
-            return None
-        return task(request)
-    return exec_task
