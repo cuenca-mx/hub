@@ -1,9 +1,7 @@
 import boto3
-import json
 from moto import mock_kinesis
 
 from hub import Worker
-from hub.kinesis import Listener, put_response, DataKinesis
 
 STREAM = 'cuenca_stream'
 STREAM_REQ = STREAM + '.request'
@@ -22,10 +20,7 @@ def test_worker():
     def other_task(record):
         return "Other Result"
 
-    tasks_list = dict(
-        task_name=task_function,
-        other_name=other_task
-    )
+    tasks_list = dict(task_name=task_function, other_name=other_task)
     w = Worker(STREAM, tasks_list, None, N_WORKERS)
     threads = w.start()
 
@@ -42,41 +37,33 @@ def test_worker():
 
 @mock_kinesis
 def test_process_records():
-    client = boto3.client('kinesis', region_name='us-east-2')
-
     # Task for new records
     def registered_task(record):
         return "OK"
 
-    tasks_list = dict(
-        registered_task=registered_task,
-    )
-
+    tasks_list = dict(registered_task=registered_task)
     w = Worker(STREAM, tasks_list, None, N_WORKERS)
     w.start()
 
     record_ok = {
         'SequenceNumber': '1',
         'Data': b'{'
-                b'"uuid": "f3296986-ded8-11e9-8000-000000000000", '
-                b'"task": "registered_task", '
-                b'"headers": {}, '
-                b'"body": {}'
-                b'}',
+        b'"uuid": "f3296986-ded8-11e9-8000-000000000000", '
+        b'"task": "registered_task", '
+        b'"headers": {}, '
+        b'"body": {}'
+        b'}',
     }
     record_missing_task = {
         'SequenceNumber': '2',
         'Data': b'{'
-                b'"uuid": "t89876702-cas9-22g1-9000-000000000000", '
-                b'"task": "missing_task", '
-                b'"headers": {}, '
-                b'"body": {}'
-                b'}',
+        b'"uuid": "t89876702-cas9-22g1-9000-000000000000", '
+        b'"task": "missing_task", '
+        b'"headers": {}, '
+        b'"body": {}'
+        b'}',
     }
-    record_malformed = {
-        'SequenceNumber': '3',
-        'Data': b'{"name": "Rogelio"}',
-    }
+    record_malformed = {'SequenceNumber': '3', 'Data': b'sample_string'}
 
     # Correct
     response = w.process_records(record_ok)

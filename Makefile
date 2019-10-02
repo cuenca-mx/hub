@@ -2,6 +2,8 @@ SHELL := bash
 PATH := ./venv/bin:${PATH}
 PYTHON=python3.7
 PROJECT=hub
+isort = isort -rc -ac $(PROJECT) tests setup.py
+black = black -S -l 79 --target-version py37 $(PROJECT) tests setup.py
 
 
 all: test
@@ -11,16 +13,21 @@ venv:
 		pip install -qU pip
 
 install-test:
-		pip install -r requirements-test.txt
-
+		pip install -q .[test]
 
 test: clean install-test lint
-		coverage run --source hub -m py.test
+		python setup.py test
 		coverage report -m
 		coveralls
 
+format:
+		$(isort)
+		$(black)
+
 lint:
-		pycodestyle setup.py $(PROJECT)/ tests/
+		flake8 $(PROJECT) tests setup.py
+		$(isort) --check-only
+		$(black) --check
 
 clean:
 		find . -name '*.pyc' -exec rm -f {} +
@@ -33,4 +40,4 @@ release: clean
 		twine upload dist/*
 
 
-.PHONY: all install-test release test clean
+.PHONY: all install-test test format lint clean release

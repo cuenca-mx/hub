@@ -3,9 +3,7 @@ from unittest.mock import Mock
 import boto3
 from moto import mock_dynamodb2, mock_kinesis
 
-from hub import find_decorated_functions, init_workers
-from hub.db.dynamo import KINESIS_DYNAMO_TABLE
-from hub.kinesis import DataKinesis, put_response
+from hub import init_workers
 from hub.kinesis.utils import kinesis_task
 
 STREAM = 'cuenca_stream'

@@ -1,7 +1,7 @@
 import boto3
 from moto import mock_kinesis
 
-from hub.kinesis import put_response
+from hub.kinesis.responser import put_response
 
 STREAM = 'cuenca_stream'
 
@@ -14,7 +14,7 @@ def test_put_response():
         "uuid": "f3296986-ded8-11e9-8000-000000000000",
         "task": "create_api_key",
         "headers": {},
-        "body": {}
+        "body": {},
     }
     res = put_response(data, STREAM)
     assert res is not None
@@ -28,7 +28,7 @@ def test_put_response_fail():
         "uuid": "f3296986-ded8-11e9-8000-000000000000",
         "task": "create_api_key",
         "headers": {},
-        "body": {}
+        "body": {},
     }
     # Stream has not been created
     res = put_response(data, STREAM)

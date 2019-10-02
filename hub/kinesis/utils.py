@@ -12,11 +12,12 @@ def kinesis_task(stream: str):
                     uuid=record.get("uuid"),
                     task=record.get("task"),
                     body=r_body,
-                    headers=dict()
+                    headers=dict(),
                 )
                 print("Response: ", res.to_dict())
                 return res.to_dict()
 
         setattr(proccess_record, "kinesis_task", stream)
         return proccess_record
+
     return decorator

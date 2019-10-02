@@ -3,9 +3,13 @@ notifications:
 
 language: python
 
+install: make install-test
+
 cache: pip
 
-script: make test
+script:
+  - make lint
+  - python setup.py test
 
 jobs:
   include:

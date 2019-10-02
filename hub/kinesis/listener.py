@@ -19,12 +19,14 @@ class Listener:
 
     def run(self):
         stream_info = client.describe_stream(
-            StreamName=self.stream_name + '.request')
+            StreamName=self.stream_name + '.request'
+        )
         shard_id = stream_info['StreamDescription']['Shards'][0]['ShardId']
         shard_iterator = client.get_shard_iterator(
             StreamName=self.stream_name + '.request',
             ShardId=shard_id,
-            ShardIteratorType='TRIM_HORIZON')
+            ShardIteratorType='TRIM_HORIZON',
+        )
 
         next_iterator = shard_iterator['ShardIterator']
 
@@ -32,7 +34,8 @@ class Listener:
         while not self.tries or index < self.tries:
             try:
                 response = client.get_records(
-                    ShardIterator=next_iterator, Limit=1)
+                    ShardIterator=next_iterator, Limit=1
+                )
 
                 records = response['Records']
 
@@ -43,6 +46,5 @@ class Listener:
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
                     index += 1
-            except (client.exceptions
-                    .ProvisionedThroughputExceededException):
+            except client.exceptions.ProvisionedThroughputExceededException:
                 time.sleep(1)

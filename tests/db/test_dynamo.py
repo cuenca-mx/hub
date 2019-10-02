@@ -1,6 +1,7 @@
 import boto3
 from moto import mock_dynamodb2
-from hub.db.dynamo import write_to_db, KINESIS_DYNAMO_TABLE
+
+from hub.db.dynamo import KINESIS_DYNAMO_TABLE, write_to_db
 
 
 @mock_dynamodb2
@@ -12,7 +13,7 @@ def test_write_to_db():
         KeySchema=[{'AttributeName': 'uuid', 'KeyType': 'HASH'}],
         AttributeDefinitions=[
             {'AttributeName': 'uuid', 'AttributeType': 'S'},
-            {'AttributeName': 'ttl', 'AttributeType': 'N'}
+            {'AttributeName': 'ttl', 'AttributeType': 'N'},
         ],
     )
 

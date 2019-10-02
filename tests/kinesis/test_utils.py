@@ -1,5 +1,3 @@
-from unittest.mock import Mock
-
 import boto3
 from moto import mock_dynamodb2
 
@@ -18,7 +16,7 @@ def test_kinesis_task():
         KeySchema=[{'AttributeName': 'uuid', 'KeyType': 'HASH'}],
         AttributeDefinitions=[
             {'AttributeName': 'uuid', 'AttributeType': 'S'},
-            {'AttributeName': 'ttl', 'AttributeType': 'N'}
+            {'AttributeName': 'ttl', 'AttributeType': 'N'},
         ],
     )
 
@@ -26,7 +24,7 @@ def test_kinesis_task():
         uuid="f3296986-ded8-11e9-8000-000000000000",
         task="create_api_key",
         headers=dict(),
-        body=dict()
+        body=dict(),
     )
 
     # Decorated function

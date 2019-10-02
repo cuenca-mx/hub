@@ -1,16 +1,15 @@
 import setuptools
 
-install_requirements = [
-    'jsonpickle'
-    'boto3>=1.9.84,<2.0'
-]
+install_requirements = ['boto3>=1.9.84,<2.0', 'jsonpickle']
 
 test_requires = [
-    'pytest>=4.2.1,<4.3.0'
-    'pycodestyle'
-    'coveralls'
-    'moto==1.3.13'
-    'jsonpickle'
+    'pytest>=4.2.1,<4.3.0' 'pytest-vcr',
+    'pytest-cov',
+    'black',
+    'isort[pipfile]',
+    'flake8',
+    'moto==1.3.13',
+    'jsonpickle',
 ]
 
 setuptools.setup(

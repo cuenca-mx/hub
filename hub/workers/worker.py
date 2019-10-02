@@ -1,14 +1,13 @@
-from jsonpickle import json
 from threading import Thread
 
-from hub.kinesis import DataKinesis
+from jsonpickle import json
+
+from hub.kinesis.data_kinesis import DataKinesis
 from hub.kinesis.listener import Listener
 
 
 class Worker(object):
-
-    def __init__(self, stream_name: str, task_list,
-                 tries=None, num_workers=1):
+    def __init__(self, stream_name: str, task_list, tries=None, num_workers=1):
         self.num_workers = num_workers
         self.stream_name = stream_name
         self.task_list = task_list
@@ -24,13 +23,14 @@ class Worker(object):
             if task is None:
                 raise NotImplementedError
             return task(data)
-        except Exception as e:
+        except Exception:
             return None
 
     def start(self):
         for i in range(self.num_workers):
             listener = Listener(
-                self.stream_name, self.process_records, self.tries)
+                self.stream_name, self.process_records, self.tries
+            )
             task = listener.run
             t = Thread(target=task)
             t.setDaemon(True)

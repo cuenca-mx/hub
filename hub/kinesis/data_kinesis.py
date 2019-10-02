@@ -10,5 +10,5 @@ class DataKinesis:
             uuid=self.uuid,
             task=self.task,
             headers=self.headers,
-            body=self.body
+            body=self.body,
         )

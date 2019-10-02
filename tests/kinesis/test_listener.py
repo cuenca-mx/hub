@@ -1,7 +1,11 @@
-import boto3
 import json
+
+import boto3
 from moto import mock_kinesis
-from hub.kinesis import Listener, put_response, DataKinesis
+
+from hub.kinesis.data_kinesis import DataKinesis
+from hub.kinesis.listener import Listener
+from hub.kinesis.responser import put_response
 
 STREAM = 'cuenca_stream'
 STREAM_REQ = STREAM + '.request'
@@ -15,7 +19,7 @@ def test_listener():
         uuid="f3296986-ded8-11e9-8000-000000000000",
         task="create_api_key",
         headers={},
-        body={}
+        body={},
     )
 
     # Callback for record

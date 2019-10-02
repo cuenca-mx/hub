@@ -1,5 +1,6 @@
 import types
-from hub.workers import Worker
+
+from hub.workers.worker import Worker
 
 
 def init_workers(module, num_workers):
