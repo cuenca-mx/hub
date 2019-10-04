@@ -2,7 +2,7 @@ import boto3
 from moto import mock_dynamodb2
 
 from hub.db.dynamo import KINESIS_DYNAMO_TABLE
-from hub.kinesis.utils import kinesis_task
+from hub.kinesis import task
 
 STREAM = 'cuenca_stream'
 
@@ -28,7 +28,7 @@ def test_kinesis_task():
     )
 
     # Decorated function
-    @kinesis_task(STREAM)
+    @task(STREAM)
     def mock_function(record):
         return dict(greeting="I'm healthy!!!")
 

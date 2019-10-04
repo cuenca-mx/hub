@@ -1,3 +1,4 @@
+import json
 import time
 
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
@@ -43,7 +44,8 @@ class Listener:
                 records = response['Records']
 
                 if records:
-                    resp = self.process_func(records[0])
+                    data = json.loads(records[0].get("Data").decode())
+                    resp = self.process_func(data)
                     put_response(resp, self.stream_name_response)
 
                 next_iterator = response['NextShardIterator']
