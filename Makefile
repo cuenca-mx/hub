@@ -17,8 +17,6 @@ install-test:
 
 test: clean install-test lint
 		python setup.py test
-		coverage report -m
-		coveralls
 
 format:
 		$(isort)

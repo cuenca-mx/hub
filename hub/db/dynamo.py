@@ -18,21 +18,16 @@ client = boto3.client(
 
 
 def write_to_db(key):
-    try:
-        ttl = int(time.time() + float(KINESIS_TTL_HOURS) * 3600)
-        response = client.put_item(
-            TableName=KINESIS_DYNAMO_TABLE,
-            Item={'uuid': {'S': key}, 'ttl': {'N': str(ttl)}},
-            ReturnValues='ALL_OLD',
-        )
-        # Validate previously inserted
-        old_value = response.get("Attributes")
-        if old_value is not None and old_value != {}:
-            print('Duplicado: ', old_value)
-            # Reset old value
-            client.put_item(TableName=KINESIS_DYNAMO_TABLE, Item=old_value)
-            return False
-        return True
-    except Exception as e:
-        print('Exception: ', e)
+    ttl = int(time.time() + float(KINESIS_TTL_HOURS) * 3600)
+    response = client.put_item(
+        TableName=KINESIS_DYNAMO_TABLE,
+        Item={'uuid': {'S': key}, 'ttl': {'N': str(ttl)}},
+        ReturnValues='ALL_OLD',
+    )
+    # Validate previously inserted
+    old_value = response.get("Attributes")
+    if old_value is not None and old_value != {}:
+        # Reset old value
+        client.put_item(TableName=KINESIS_DYNAMO_TABLE, Item=old_value)
         return False
+    return True
