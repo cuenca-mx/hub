@@ -1,5 +1,6 @@
 import json
 import time
+from typing import Callable
 
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
@@ -9,8 +10,9 @@ from hub.kinesis.producer import put_response
 
 
 class Listener:
-    def __init__(self, stream_name: str, process_func: function,
-                 tries: int=None):
+    def __init__(
+        self, stream_name: str, process_func: Callable, tries: int = None
+    ):
         self.stream_name = stream_name
         self.stream_name_request = stream_name + '.request'
         self.stream_name_response = stream_name + '.response'

@@ -1,8 +1,5 @@
 import json
-import time
 from datetime import datetime
-
-from boto.kinesis.exceptions import ResourceNotFoundException
 
 from hub import kinesis_client
 

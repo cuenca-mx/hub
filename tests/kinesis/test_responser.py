@@ -17,9 +17,7 @@ def test_put_response():
         "body": {},
     }
     res = put_response(data, STREAM)
-    assert res is not None
-    assert res.get("ShardId") is not None
-    assert res.get("SequenceNumber") is not None
+    assert res
 
 
 @mock_kinesis

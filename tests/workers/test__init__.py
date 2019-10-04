@@ -3,8 +3,8 @@ from unittest.mock import Mock
 import boto3
 from moto import mock_dynamodb2, mock_kinesis
 
+from hub.kinesis.decorators import task
 from hub.workers import init_workers
-from hub.kinesis import task
 
 STREAM = 'cuenca_stream'
 STREAM_REQ = STREAM + '.request'

@@ -2,7 +2,7 @@ import boto3
 from moto import mock_dynamodb2
 
 from hub.db.dynamo import KINESIS_DYNAMO_TABLE
-from hub.kinesis import task
+from hub.kinesis.decorators import task
 
 STREAM = 'cuenca_stream'
 
@@ -33,7 +33,7 @@ def test_kinesis_task():
         return dict(greeting="I'm healthy!!!")
 
     # Custom attribute
-    assert getattr(mock_function, "kinesis_task") == STREAM
+    assert getattr(mock_function, "task") == STREAM
 
     # Task processed 1st time
     task_result = mock_function(data)

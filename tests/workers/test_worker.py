@@ -1,7 +1,7 @@
 import boto3
 from moto import mock_kinesis
 
-from hub import Worker
+from hub.workers import Worker
 
 STREAM = 'cuenca_stream'
 STREAM_REQ = STREAM + '.request'

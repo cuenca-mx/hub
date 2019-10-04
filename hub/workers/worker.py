@@ -1,12 +1,17 @@
 from threading import Thread
-from typing import Dict
+from typing import Callable, Dict
 
 from hub.kinesis.listener import Listener
 
 
 class Worker(object):
-    def __init__(self, stream_name: str, task_list: Dict[str, function],
-                 tries=None, num_workers=1):
+    def __init__(
+        self,
+        stream_name: str,
+        task_list: Dict[str, Callable],
+        tries=None,
+        num_workers=1,
+    ):
         self.num_workers = num_workers
         self.stream_name = stream_name
         self.task_list = task_list

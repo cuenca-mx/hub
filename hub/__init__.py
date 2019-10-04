@@ -1,5 +1,3 @@
-from hub.workers.worker import Worker
-
 import os
 
 import boto3
