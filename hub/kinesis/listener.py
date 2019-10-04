@@ -4,11 +4,12 @@ from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
 from hub import kinesis_client
 from hub.kinesis.helpers import create_stream, stream_is_active
-from hub.kinesis.responser import put_response
+from hub.kinesis.producer import put_response
 
 
 class Listener:
-    def __init__(self, stream_name: str, process_func: function, tries=None):
+    def __init__(self, stream_name: str, process_func: function,
+                 tries: int=None):
         self.stream_name = stream_name
         self.stream_name_request = stream_name + '.request'
         self.stream_name_response = stream_name + '.response'

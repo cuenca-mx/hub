@@ -5,7 +5,7 @@ from moto import mock_kinesis
 
 from hub.kinesis.data_kinesis import DataKinesis
 from hub.kinesis.listener import Listener
-from hub.kinesis.responser import put_response
+from hub.kinesis.producer import put_response
 
 STREAM = 'cuenca_stream'
 STREAM_REQ = STREAM + '.request'
