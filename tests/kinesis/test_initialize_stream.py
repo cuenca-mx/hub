@@ -1,7 +1,7 @@
 import boto3
 from moto import mock_kinesis
 
-from hub.kinesis.initialize_stream import check_status_stream, create_stream
+from hub.kinesis.helpers import check_status_stream, create_stream
 
 STREAM = 'cuenca_stream'
 
