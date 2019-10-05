@@ -6,7 +6,7 @@ from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
 from hub import kinesis_client
 from hub.kinesis.helpers import create_stream, stream_is_active
-from hub.kinesis.producer import put_response
+from hub.kinesis.producer import Producer
 
 
 class Listener:
@@ -25,11 +25,11 @@ class Listener:
 
     def run(self):
         stream_info = kinesis_client.describe_stream(
-            StreamName=self.stream_name + '.request'
+            StreamName=self.stream_name_request
         )
         shard_id = stream_info['StreamDescription']['Shards'][0]['ShardId']
         shard_iterator = kinesis_client.get_shard_iterator(
-            StreamName=self.stream_name + '.request',
+            StreamName=self.stream_name_request,
             ShardId=shard_id,
             ShardIteratorType='TRIM_HORIZON',
         )
@@ -48,7 +48,7 @@ class Listener:
                 if records:
                     data = json.loads(records[0].get("Data").decode())
                     resp = self.process_func(data)
-                    put_response(resp, self.stream_name_response)
+                    Producer.put_data(resp, self.stream_name_response)
 
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
