@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import boto3
 from moto import mock_dynamodb2, mock_kinesis
 
-from hub.kinesis.decorators import task
+from hub.kinesis.decorators import hub_task
 from hub.workers import init_workers
 
 STREAM = 'cuenca_stream'
@@ -19,7 +19,7 @@ def test_init_workers():
     # Create Module with tasks
     module = Mock()
 
-    @task(STREAM)
+    @hub_task(STREAM)
     def mock_function(record):
         return dict(greeting="I'm healthy!!!")
 

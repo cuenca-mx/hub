@@ -1,6 +1,8 @@
 import boto3
+import pytest
 from moto import mock_kinesis
 
+from hub import kinesis_client
 from hub.kinesis.producer import put_response
 
 STREAM = 'cuenca_stream'
@@ -29,5 +31,5 @@ def test_put_response_fail():
         "body": {},
     }
     # Stream has not been created
-    res = put_response(data, STREAM)
-    assert res is None
+    with pytest.raises(kinesis_client.exceptions.ResourceNotFoundException):
+        put_response(data, STREAM)

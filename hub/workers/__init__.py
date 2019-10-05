@@ -19,7 +19,7 @@ def init_workers(module, num_workers):
 
 def find_decorated_functions(module):
     """
-    Find all function in the module that implement "kinesis_task" decorator.
+    Find all function in the module that implement "hub_task" decorator.
     Group functions by "stream" param
 
     streams: (
@@ -36,9 +36,8 @@ def find_decorated_functions(module):
     for name in dir(module):
         obj_module = getattr(module, name)
         if isinstance(obj_module, types.FunctionType):
-            kinesis_stream = getattr(obj_module, "kinesis_task", None)
+            kinesis_stream = getattr(obj_module, "hub_task", None)
             if kinesis_stream is not None:
-                print('Function', name, "() -->", kinesis_stream)
                 group_functions = streams.get(kinesis_stream, dict())
                 group_functions[name] = obj_module
                 streams[kinesis_stream] = group_functions

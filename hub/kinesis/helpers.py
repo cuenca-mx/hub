@@ -1,7 +1,5 @@
 import time
 
-from boto.kinesis.exceptions import ResourceInUseException
-
 from hub import kinesis_client
 
 
@@ -18,7 +16,7 @@ def stream_is_active(stream_name: str) -> bool:
 def create_stream(stream_name: str) -> bool:
     try:
         kinesis_client.create_stream(StreamName=stream_name, ShardCount=1)
-    except ResourceInUseException:
+    except kinesis_client.exceptions.ResourceInUseException:
         time.sleep(1)
     status = stream_is_active(stream_name)
     return status

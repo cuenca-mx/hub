@@ -2,7 +2,7 @@ from hub.db.dynamo import write_to_db
 from hub.kinesis.data_kinesis import DataKinesis
 
 
-def task(stream: str):
+def hub_task(stream: str):
     def decorator(function):
         def proccess_record(record):
             unique_trans = write_to_db(record.get("uuid"))
@@ -16,7 +16,7 @@ def task(stream: str):
                 )
                 return res.to_dict()
 
-        setattr(proccess_record, "task", stream)
+        setattr(proccess_record, "hub_task", stream)
         return proccess_record
 
     return decorator

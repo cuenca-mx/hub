@@ -2,13 +2,13 @@ import boto3
 from moto import mock_dynamodb2
 
 from hub.db.dynamo import KINESIS_DYNAMO_TABLE
-from hub.kinesis.decorators import task
+from hub.kinesis.decorators import hub_task
 
 STREAM = 'cuenca_stream'
 
 
 @mock_dynamodb2
-def test_kinesis_task():
+def test_hub_task():
     client = boto3.client('dynamodb', region_name='us-east-2')
 
     client.create_table(
@@ -28,12 +28,12 @@ def test_kinesis_task():
     )
 
     # Decorated function
-    @task(STREAM)
+    @hub_task(STREAM)
     def mock_function(record):
         return dict(greeting="I'm healthy!!!")
 
     # Custom attribute
-    assert getattr(mock_function, "task") == STREAM
+    assert getattr(mock_function, "hub_task") == STREAM
 
     # Task processed 1st time
     task_result = mock_function(data)

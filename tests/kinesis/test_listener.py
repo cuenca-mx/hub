@@ -1,5 +1,3 @@
-import json
-
 import boto3
 from moto import mock_kinesis
 
@@ -24,8 +22,7 @@ def test_listener():
 
     # Callback for record
     def process_records(record):
-        stream_data = json.loads(record.get("Data").decode())
-        assert stream_data.get("uuid") == data.uuid
+        assert record.get("uuid") == data.uuid
 
     # Create streams and listener
     listener = Listener(STREAM, process_records, 1)
