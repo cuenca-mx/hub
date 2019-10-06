@@ -2,6 +2,7 @@ import json
 import time
 from datetime import datetime
 from typing import Dict
+import uuid
 
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
@@ -24,11 +25,12 @@ class Producer:
         Sync method, it send data through `stream_name`.request stream and
         waits for the response in `stream_name`.response
         :param data: Dictionary containing data to be transmitted
+        :param task_name: Name of the task to be executed
         :return: Dictionary with the response data
         """
         # Send data
-        uuid = 'uuid.uuid1()'
-        request = dict(uuid=uuid, task=task_name, headers=dict(), body=data)
+        uid = uuid.uuid1().int
+        request = dict(uuid=uid, task=task_name, headers=dict(), body=data)
         assert self.put_data(request, self.stream_name_request)
 
         # Wait for the response
@@ -53,7 +55,7 @@ class Producer:
 
                 if records:
                     data = json.loads(records[0].get("Data").decode())
-                    if data['uuid'] == uuid:
+                    if data['uuid'] == uid:
                         return data['body']
             except ProvisionedThroughputExceededException:
                 time.sleep(1)
