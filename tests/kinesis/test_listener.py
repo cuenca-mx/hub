@@ -3,7 +3,7 @@ from moto import mock_kinesis
 
 from hub.kinesis.data_kinesis import DataKinesis
 from hub.kinesis.listener import Listener
-from hub.kinesis.producer import put_response
+from hub.kinesis.producer import Producer
 
 STREAM = 'cuenca_stream'
 STREAM_REQ = STREAM + '.request'
@@ -30,5 +30,5 @@ def test_listener():
     assert STREAM_REQ in list_stream
     assert STREAM_RES in list_stream
     # Receive data. Listen and execute callback
-    put_response(data.to_dict(), STREAM_REQ)
+    Producer.put_data(data.to_dict(), STREAM_REQ)
     listener.run()

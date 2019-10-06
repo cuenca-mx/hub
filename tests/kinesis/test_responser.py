@@ -3,7 +3,7 @@ import pytest
 from moto import mock_kinesis
 
 from hub import kinesis_client
-from hub.kinesis.producer import put_response
+from hub.kinesis.producer import Producer
 
 STREAM = 'cuenca_stream'
 
@@ -18,7 +18,7 @@ def test_put_response():
         "headers": {},
         "body": {},
     }
-    res = put_response(data, STREAM)
+    res = Producer.put_data(data, STREAM)
     assert res
 
 
@@ -32,4 +32,4 @@ def test_put_response_fail():
     }
     # Stream has not been created
     with pytest.raises(kinesis_client.exceptions.ResourceNotFoundException):
-        put_response(data, STREAM)
+        Producer.put_data(data, STREAM)

@@ -1,6 +1,6 @@
+import json
 import time
 from datetime import datetime
-import json
 from typing import Dict
 
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
@@ -27,13 +27,8 @@ class Producer:
         :return: Dictionary with the response data
         """
         # Send data
-        uuid = uuid.uuid1()
-        request = dict(
-            uuid=uuid,
-            task=task_name,
-            headers=dict(),
-            body=data
-        )
+        uuid = 'uuid.uuid1()'
+        request = dict(uuid=uuid, task=task_name, headers=dict(), body=data)
         assert self.put_data(request, self.stream_name_request)
 
         # Wait for the response
@@ -58,7 +53,7 @@ class Producer:
 
                 if records:
                     data = json.loads(records[0].get("Data").decode())
-                    if data['uuid'] == uuid: 
+                    if data['uuid'] == uuid:
                         return data['body']
             except ProvisionedThroughputExceededException:
                 time.sleep(1)
@@ -68,7 +63,7 @@ class Producer:
         input_data = json.dumps(data)
         partition_key = '{}-{}'.format(
             stream_name,
-            str(datetime.now().isoformat() + 'Z').replace(' ', '-')
+            str(datetime.now().isoformat() + 'Z').replace(' ', '-'),
         )
 
         kinesis_client.put_record(
