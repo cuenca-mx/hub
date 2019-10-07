@@ -7,7 +7,7 @@ def hub_task(stream: str):
         def proccess_record(record):
             unique_trans = write_to_db(record.get("uuid"))
             if unique_trans:
-                r_body = function(record)
+                r_body = function(record['body'])
                 res = DataKinesis(
                     uuid=record.get("uuid"),
                     task=record.get("task"),

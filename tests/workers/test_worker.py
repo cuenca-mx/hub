@@ -15,10 +15,10 @@ def test_worker():
     client = boto3.client('kinesis', region_name='us-east-2')
 
     # Callback for new records
-    def task_function(record):
+    def task_function(_):
         return "Result OK"
 
-    def other_task(record):
+    def other_task(_):
         return "Other Result"
 
     tasks_list = dict(task_name=task_function, other_name=other_task)

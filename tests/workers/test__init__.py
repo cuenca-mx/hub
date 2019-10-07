@@ -20,7 +20,7 @@ def test_init_workers():
     module = Mock()
 
     @hub_task(STREAM)
-    def mock_function(record):
+    def mock_function(_):
         return dict(greeting="I'm healthy!!!")
 
     module.mock_function = mock_function

@@ -1,9 +1,10 @@
 import json
 import time
+import uuid
 from datetime import datetime
 from typing import Dict
-import uuid
 
+import timeout_decorator
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
 from hub import kinesis_client
@@ -29,19 +30,28 @@ class Producer:
         :return: Dictionary with the response data
         """
         # Send data
-        uid = uuid.uuid1().int
+        uid = str(uuid.uuid1())
         request = dict(uuid=uid, task=task_name, headers=dict(), body=data)
         assert self.put_data(request, self.stream_name_request)
 
         # Wait for the response
+        return self.wait_for_data(uid)
+
+    @timeout_decorator.timeout(
+        seconds=15, timeout_exception=TimeoutError, use_signals=False
+    )
+    def wait_for_data(self, uid: str) -> Dict:
+        # Get info from the stream
         stream_info = kinesis_client.describe_stream(
             StreamName=self.stream_name_response
         )
         shard_id = stream_info['StreamDescription']['Shards'][0]['ShardId']
+
+        # Start iterator
         shard_iterator = kinesis_client.get_shard_iterator(
             StreamName=self.stream_name_response,
             ShardId=shard_id,
-            ShardIteratorType='LAST',
+            ShardIteratorType='TRIM_HORIZON',
         )
         next_iterator = shard_iterator['ShardIterator']
 

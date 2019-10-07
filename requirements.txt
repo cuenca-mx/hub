@@ -1,2 +1,3 @@
 jsonpickle
 boto3>=1.9.84,<2.0
+timeout-decorator>=0.4.1,<0.5
