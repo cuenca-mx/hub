@@ -9,8 +9,8 @@ class Worker(object):
         self,
         stream_name: str,
         task_list: Dict[str, Callable],
-        tries=None,
-        num_workers=1,
+        tries: int = None,
+        num_workers: int = 1,
     ):
         self.num_workers = num_workers
         self.stream_name = stream_name

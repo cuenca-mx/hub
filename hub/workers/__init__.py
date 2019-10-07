@@ -1,9 +1,10 @@
 import types
+from types import ModuleType
 
 from .worker import Worker
 
 
-def init_workers(module, num_workers):
+def init_workers(module: ModuleType, num_workers: int):
     """
     Init N workers for each "KinesisStream"
     Assign a group of functions
@@ -17,7 +18,7 @@ def init_workers(module, num_workers):
     return workers_created
 
 
-def find_decorated_functions(module):
+def find_decorated_functions(module: ModuleType):
     """
     Find all function in the module that implement "hub_task" decorator.
     Group functions by "stream" param
