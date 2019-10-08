@@ -1,5 +1,7 @@
-# Hub
-librería para implementar kinesis
+## Hub
+
+[![Build Status](https://travis-ci.com/cuenca-mx/hub.svg?branch=master)](https://travis-ci.com/cuenca-mx/hub)
+[![Coverage Status](https://coveralls.io/repos/github/cuenca-mx/hub/badge.svg?branch=master)](https://coveralls.io/github/cuenca-mx/hub?branch=master)
 
 
 ## Testing
