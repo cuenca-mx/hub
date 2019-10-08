@@ -31,6 +31,7 @@ jobs:
       sudo: true
       before_install:
       - cp env.template .env
+      - export $(grep -v '^#' .env | xargs -0)
       install:
       - make install-test
       - pip install coveralls
