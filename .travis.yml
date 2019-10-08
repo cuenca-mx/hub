@@ -48,7 +48,7 @@ jobs:
         provider: pypi
         user: cuenca
         password:
-          secure: "VWMU62xKkx+uEX3r3/rZAusOX95IrwvfZg/wDrmIUqilZwcUT2CJUhcQpfkDMeVFAI33VXqFEmpZuYIXGSBwLGpi9dzl7Mbu+jW+Hn+e6Au4j9ZosKiXtRAYr78Ii5Nun5m/GG86niUREmqiO3KaGlw5vSOYoD/uqY5T/REJ8STZG62YruuuB8bgXAWL8acSL0VvUQeljVCCiOGcko+vy9rtb5+bRamsNqT92RIesao8jUWSIjNtn+CQ7VK/23VTiqPhxu/s9c7Nt9eEdgeIchO5eZdKKi2AfSng/RL9EkrNUsxqLhQBHa1YXb7zK4v6Og0RlPbG4Niq67TvHpWXwaDEjxrmovfyf4qPKcv4vjG+roILUPG4IO+2UbA6J9VDRh09gQS3fDnzfJUKg4iw8md/NwNNsAcd7Sr1XC0DmkTP8ah+es8VIb5dLsCHAlQrNrbrgZglNWXxnc3sqeCWu5/Zxs9CbUA1jwAm6M13O00f2aZjHkXBFBoO6bTnI64Ju9y3F8jG+3zH3VXthHl6qEQ9IolWlhVwPV7/2cO4qG1FQk+yijRI5gd2f/EoCrSYsXqsHqpM3dhEpWTrcSe/3ns8mwhDa6ho+L+QueCxQa72lkUyrVOkABBsL5MprVdUGnCDexlBTRSqHlVn0KubtncLr8fVRbL4aitXArOyjYY="
+          secure: "atFjApvSn93OdZE7+WYFdRsEcw4sMljSBELOSOV80EAgmo6OiWQmAYZdi7QDRPRiQXi4WaKcAWCQgoIsIOt9SXnW9w/crONRLpOwAuirduDzr7sqhaquATJwZLFUR26uyiz5pWR6Q/0QTyAV5ygxRrbZTuL1zT+4IMahOmd+sW+VF3+M6BeXgMZRW6DehXwb9Ush8XoZDOHYwjwDnKSZivRLj4FImmfhAUNBQH0voBuzGxIlefD9fPmQcG+ptQgdDLYKSpTZ6dcJbABqqpnsimA7tLO6qbF7QZ7BgCV3c+BeZTseO9x79jE6LjjjJmFahMY8t8M2qHQXbUDLWgFLPI9zcr0LaIwCLFn0QLjSK4M50YRoEJXUjj9u6hD6oOZxMOyu0zPwOppo6KuSAHc83ovDmtX0pQYkvv0z+3oIipCjxwN06GQPefKEfxcQxNCa6mxWalxdgAmHx6LjuQK5xR/3ofxDSWQvYno3KMDn/GStJwzg+uSsmgYQ1hf6PjKRZdocHtbpMBXAhlkOsLwxNcQHMkBTTYLk9AKjfzp+5x7Vaw7BlrQEbg/Cfo70bkE1R7aOERyN1LcU+kpozNY/mGL7mx8hXa5acyDp+0XY3WXjredycmraw0yovgRcqi+wsUg1/fOMzPJx4AoOTqgROZ88R8MRdzDE8wn5YNNvV8o="
 
         on:
           tags: true
