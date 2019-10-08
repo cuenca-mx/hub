@@ -1,7 +1,8 @@
 import boto3
+import pytest
 from moto import mock_kinesis
 
-from hub import Worker
+from hub.workers import Worker
 
 STREAM = 'cuenca_stream'
 STREAM_REQ = STREAM + '.request'
@@ -14,10 +15,10 @@ def test_worker():
     client = boto3.client('kinesis', region_name='us-east-2')
 
     # Callback for new records
-    def task_function(record):
+    def task_function(_):
         return "Result OK"
 
-    def other_task(record):
+    def other_task(_):
         return "Other Result"
 
     tasks_list = dict(task_name=task_function, other_name=other_task)
@@ -38,31 +39,26 @@ def test_worker():
 @mock_kinesis
 def test_process_records():
     # Task for new records
-    def registered_task(record):
+    def registered_task(_):
         return "OK"
 
     tasks_list = dict(registered_task=registered_task)
     w = Worker(STREAM, tasks_list, None, N_WORKERS)
-    w.start()
 
-    record_ok = {
-        'SequenceNumber': '1',
-        'Data': b'{'
-        b'"uuid": "f3296986-ded8-11e9-8000-000000000000", '
-        b'"task": "registered_task", '
-        b'"headers": {}, '
-        b'"body": {}'
-        b'}',
-    }
-    record_missing_task = {
-        'SequenceNumber': '2',
-        'Data': b'{'
-        b'"uuid": "t89876702-cas9-22g1-9000-000000000000", '
-        b'"task": "missing_task", '
-        b'"headers": {}, '
-        b'"body": {}'
-        b'}',
-    }
+    record_ok = dict(
+        uuid='f3296986-ded8-11e9-8000-000000000000',
+        task='registered_task',
+        headers=dict(),
+        body=dict(),
+    )
+
+    record_missing_task = dict(
+        uuid='t89876702-cas9-22g1-9000-000000000000',
+        task='missing_task',
+        headers=dict(),
+        body=dict(),
+    )
+
     record_malformed = {'SequenceNumber': '3', 'Data': b'sample_string'}
 
     # Correct
@@ -70,9 +66,9 @@ def test_process_records():
     assert response == "OK"
 
     # Task function not found
-    response = w.process_records(record_missing_task)
-    assert response is None
+    with pytest.raises(NotImplementedError):
+        w.process_records(record_missing_task)
 
     # Malformed record
-    response = w.process_records(record_malformed)
-    assert response is None
+    with pytest.raises(NotImplementedError):
+        w.process_records(record_malformed)

@@ -1,4 +1,5 @@
 import boto3
+import pytest
 from moto import mock_dynamodb2
 
 from hub.db.dynamo import KINESIS_DYNAMO_TABLE, write_to_db
@@ -25,7 +26,8 @@ def test_write_to_db():
     assert not unique
 
 
+@mock_dynamodb2
 def test_service_not_available():
     transaction = "f3296986-ded8-11e9-8000-000000000000"
-    ok: bool = write_to_db(transaction)
-    assert not ok
+    with pytest.raises(ValueError):
+        write_to_db(transaction)
