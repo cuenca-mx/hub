@@ -24,7 +24,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(
-    name='hub',
+    name='hub-kinesis',
     version=version.__version__,
     author='Cuenca',
     author_email='dev@cuenca.com',
