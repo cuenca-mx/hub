@@ -11,8 +11,8 @@ streams and a producer to send data and wait for the response.
 
 ```bash
 make install-dev
+make test
 ```
-
 
 ## Testing
 
