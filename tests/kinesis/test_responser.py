@@ -2,7 +2,7 @@ import boto3
 import pytest
 from moto import mock_kinesis
 
-from hub import kinesis_client
+from hub.client import kinesis_client
 from hub.kinesis.producer import Producer
 
 STREAM = 'cuenca_stream'

@@ -7,7 +7,7 @@ from typing import Dict
 import timeout_decorator
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
-from hub import kinesis_client
+from hub.client import kinesis_client
 from hub.kinesis.helpers import create_stream, stream_is_active
 
 
