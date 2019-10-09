@@ -1,6 +1,6 @@
 import time
 
-from hub import kinesis_client
+from hub.client import kinesis_client
 
 
 def stream_is_active(stream_name: str) -> bool:

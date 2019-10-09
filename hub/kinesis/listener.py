@@ -4,7 +4,7 @@ from typing import Callable
 
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
-from hub import kinesis_client
+from hub.client import kinesis_client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
 
