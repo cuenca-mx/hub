@@ -32,7 +32,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/cuenca-mx/hub',
-    packages=['hub'],
+    packages=['hub', 'hub.db', 'hub.kinesis', 'hub.workers'],
     python_requires='>=3.6',
     install_requires=install_requirements,
     setup_requires=['pytest-runner'],
