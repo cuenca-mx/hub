@@ -1,6 +1,6 @@
 from importlib.machinery import SourceFileLoader
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 version = SourceFileLoader('version', 'hub/version.py').load_module()
 
@@ -32,7 +32,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/cuenca-mx/hub',
-    packages=['hub'],
+    packages=find_packages(),
     python_requires='>=3.6',
     install_requires=install_requirements,
     setup_requires=['pytest-runner'],
