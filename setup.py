@@ -8,7 +8,6 @@ install_requirements = [
     'boto3>=1.9.84,<2.0',
     'jsonpickle',
     'timeout-decorator>=0.4.1,<0.5',
-    'boto',
 ]
 
 test_requires = [
