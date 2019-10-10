@@ -14,6 +14,8 @@ def write_to_db(key: str) -> bool:
         if str(ex) == 'No table found':
             create_table()
             return insert_register(key)
+        else:
+            raise ex
 
 
 def create_table():
