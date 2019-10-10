@@ -10,9 +10,10 @@ KINESIS_TTL_HOURS = os.getenv('KINESIS_TTL_HOURS', 24)
 def write_to_db(key: str) -> bool:
     try:
         return insert_register(key)
-    except ValueError:
-        create_table()
-        return insert_register(key)
+    except ValueError as ex:
+        if str(ex) == 'No table found':
+            create_table()
+            return insert_register(key)
 
 
 def create_table():
