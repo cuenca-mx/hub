@@ -2,13 +2,11 @@ import json
 import time
 from typing import Callable
 
+from boto.kinesis.exceptions import ProvisionedThroughputExceededException
+
 from hub.client import kinesis_client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
-
-provisionedThroughputExceeded = (
-    kinesis_client.exceptions.ProvisionedThroughputExceededException
-)
 
 
 class Listener:
@@ -55,5 +53,5 @@ class Listener:
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
                     index += 1
-            except provisionedThroughputExceeded:
+            except ProvisionedThroughputExceededException:
                 time.sleep(1)
