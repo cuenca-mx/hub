@@ -37,9 +37,4 @@ def test_hub_task():
 
     # Task processed 1st time
     task_result = mock_function(data)
-    assert task_result.get("uuid") == data.get("uuid")
-    assert task_result.get("body").get("greeting") == "I'm healthy!!!"
-
-    # Task duplicated
-    task_duplicated_result = mock_function(data)
-    assert task_duplicated_result is None
+    assert task_result.get("greeting") == "I'm healthy!!!"

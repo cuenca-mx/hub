@@ -1,6 +1,6 @@
 import boto3
 import pytest
-from moto import mock_kinesis
+from moto import mock_dynamodb2, mock_kinesis
 
 from hub.workers import Worker
 
@@ -37,10 +37,11 @@ def test_worker():
 
 
 @mock_kinesis
+@mock_dynamodb2
 def test_process_records():
     # Task for new records
     def registered_task(_):
-        return "OK"
+        return dict(greeting='OK')
 
     tasks_list = dict(registered_task=registered_task)
     w = Worker(STREAM, tasks_list, None, N_WORKERS)
@@ -63,12 +64,12 @@ def test_process_records():
 
     # Correct
     response = w.process_records(record_ok)
-    assert response == "OK"
+    assert response.get('body').get('greeting') == 'OK'
 
     # Task function not found
     with pytest.raises(NotImplementedError):
         w.process_records(record_missing_task)
 
     # Malformed record
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(ValueError):
         w.process_records(record_malformed)

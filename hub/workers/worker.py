@@ -1,6 +1,8 @@
 from threading import Thread
 from typing import Callable, Dict
 
+from hub.db.dynamo import write_to_db
+from hub.kinesis.data_kinesis import DataKinesis
 from hub.kinesis.listener import Listener
 
 
@@ -19,12 +21,24 @@ class Worker(object):
         self.threads = []
 
     def process_records(self, data: Dict):
-        name_task = data.get("task", "")
-        task = self.task_list.get(name_task, None)
-        # Not found task
-        if task is None:
-            raise NotImplementedError
-        return task(data)
+        name_task = data.get('task', '')
+        uuid = data.get("uuid")
+        if uuid is None:
+            raise ValueError
+        unique_trans = write_to_db(uuid)
+        if unique_trans:
+            task = self.task_list.get(name_task, None)
+            # Not found task
+            if task is None:
+                raise NotImplementedError
+            body = task(data.get('body'))
+            res = DataKinesis(
+                uuid=data.get("uuid"),
+                task=data.get("task"),
+                body=body,
+                headers=dict(),
+            )
+            return res.to_dict()
 
     def start(self):
         for i in range(self.num_workers):
