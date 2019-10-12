@@ -1,5 +1,4 @@
 import boto3
-import pytest
 from moto import mock_dynamodb2, mock_kinesis
 
 from hub.workers import Worker
@@ -67,9 +66,9 @@ def test_process_records():
     assert response.get('body').get('greeting') == 'OK'
 
     # Task function not found
-    with pytest.raises(NotImplementedError):
-        w.process_records(record_missing_task)
+    response = w.process_records(record_missing_task)
+    assert response.get('body').get('error') == 'Task not implemented'
 
     # Malformed record
-    with pytest.raises(ValueError):
-        w.process_records(record_malformed)
+    response = w.process_records(record_malformed)
+    assert response.get('body').get('error') == 'UUID not assigned'
