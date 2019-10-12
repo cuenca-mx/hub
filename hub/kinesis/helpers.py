@@ -9,7 +9,7 @@ def stream_is_active(stream_name: str) -> bool:
         description = stream_info.get('StreamDescription')
         response = description.get('StreamStatus') == 'ACTIVE'
     except kinesis_client.exceptions.ResourceNotFoundException:
-        response = False
+        response = create_stream(stream_name)
     return response
 
 
@@ -19,4 +19,6 @@ def create_stream(stream_name: str) -> bool:
     except kinesis_client.exceptions.ResourceInUseException:
         time.sleep(1)
     status = stream_is_active(stream_name)
+    if status != 'ACTIVE':
+        time.sleep(1)
     return status

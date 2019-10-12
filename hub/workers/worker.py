@@ -21,24 +21,46 @@ class Worker(object):
         self.threads = []
 
     def process_records(self, data: Dict):
-        name_task = data.get('task', '')
-        uuid = data.get("uuid")
-        if uuid is None:
-            raise ValueError
-        unique_trans = write_to_db(uuid)
-        if unique_trans:
-            task = self.task_list.get(name_task, None)
-            # Not found task
-            if task is None:
-                raise NotImplementedError
-            body = task(data.get('body'))
-            res = DataKinesis(
-                uuid=data.get("uuid"),
-                task=data.get("task"),
-                body=body,
+        try:
+            name_task = data.get('task', '')
+            uuid = data.get("uuid")
+            if uuid is None:
+                raise ValueError
+            unique_trans = write_to_db(uuid)
+            if unique_trans:
+                task = self.task_list.get(name_task, None)
+                # Not found task
+                if task is None:
+                    raise NotImplementedError
+                body = task(data.get('body'))
+                res = DataKinesis(
+                    uuid=data.get("uuid"),
+                    task=data.get("task"),
+                    body=body,
+                    headers=dict(),
+                )
+                return res.to_dict()
+        except ValueError:
+            return DataKinesis(
+                uuid="",
+                task="",
+                body=dict(error="UUID not assigned"),
                 headers=dict(),
-            )
-            return res.to_dict()
+            ).to_dict()
+        except NotImplementedError:
+            return DataKinesis(
+                uuid=data.get("uuid"),
+                task="",
+                body=dict(error="Task not implemented"),
+                headers=dict(),
+            ).to_dict()
+        except Exception as ex:
+            return DataKinesis(
+                uuid=data.get("uuid"),
+                task="",
+                body=dict(error=str(ex)),
+                headers=dict(),
+            ).to_dict()
 
     def start(self):
         for i in range(self.num_workers):
