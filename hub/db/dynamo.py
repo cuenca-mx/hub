@@ -3,7 +3,7 @@ import time
 
 from hub.client import dynamo_client
 
-KINESIS_DYNAMO_TABLE = os.environ['KINESIS_DYNAMO_TABLE']
+KINESIS_DYNAMO_TABLE = os.getenv('KINESIS_DYNAMO_TABLE')
 KINESIS_TTL_HOURS = os.getenv('KINESIS_TTL_HOURS', 24)
 
 
