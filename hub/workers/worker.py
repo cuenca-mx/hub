@@ -58,7 +58,7 @@ class Worker(object):
             return DataKinesis(
                 uuid=data.get("uuid"),
                 task="",
-                body=dict(error=str(ex)),
+                body=dict(error=repr(ex)),
                 headers=dict(),
             ).to_dict()
 
