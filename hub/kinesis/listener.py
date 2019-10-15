@@ -51,7 +51,8 @@ class Listener:
                 if records:
                     data = json.loads(records[0].get("Data").decode())
                     resp = self.process_func(data)
-                    Producer.put_data(resp, self.stream_name_response)
+                    if resp:
+                        Producer.put_data(resp, self.stream_name_response)
 
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:

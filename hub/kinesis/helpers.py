@@ -1,3 +1,5 @@
+import datetime
+import json
 import time
 
 from hub.client import kinesis_client
@@ -22,3 +24,11 @@ def create_stream(stream_name: str) -> bool:
     if status != 'ACTIVE':
         time.sleep(1)
     return status
+
+
+def dict_to_json(data: object):
+    def custom_converter(o):
+        if isinstance(o, (datetime.date, datetime.datetime)):
+            return o.__str__()
+
+    return json.dumps(data, default=custom_converter)
