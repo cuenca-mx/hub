@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 import uuid
 from datetime import datetime
@@ -65,6 +66,7 @@ class Producer:
 
                 if records:
                     data = json.loads(records[0].get("Data").decode())
+                    logging.info(f'Producer: {str(data)}')
                     if data and data['uuid'] == uid:
                         return data['body']
 
@@ -74,6 +76,7 @@ class Producer:
 
     @staticmethod
     def put_data(data: dict, stream_name: str) -> bool:
+        logging.info(f'PutData: {str(data)}')
         input_data = dict_to_json(data)
         partition_key = '{}-{}'.format(
             stream_name,
