@@ -1,14 +1,13 @@
+import datetime as dt
 import json
 import logging
 import time
 import uuid
-from datetime import datetime
 from typing import Dict
 
 import timeout_decorator
-from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
-from hub.client import kinesis_client
+from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, dict_to_json, stream_is_active
 
 
@@ -33,45 +32,46 @@ class Producer:
         # Send data
         uid = str(uuid.uuid1())
         request = dict(uuid=uid, task=task_name, headers=dict(), body=data)
+        datetime = dt.datetime.utcnow()
         assert self.put_data(request, self.stream_name_request)
 
         # Wait for the response
-        return self.wait_for_data(uid)
+        return self.wait_for_data(uid, datetime)
 
     @timeout_decorator.timeout(
         seconds=15, timeout_exception=TimeoutError, use_signals=False
     )
-    def wait_for_data(self, uid: str) -> Dict:
+    def wait_for_data(self, uid: str, datetime_insert: dt.datetime) -> Dict:
         # Get info from the stream
-        stream_info = kinesis_client.describe_stream(
+        stream_info = client.describe_stream(
             StreamName=self.stream_name_response
         )
         shard_id = stream_info['StreamDescription']['Shards'][0]['ShardId']
 
         # Start iterator
-        shard_iterator = kinesis_client.get_shard_iterator(
+        shard_iterator = client.get_shard_iterator(
             StreamName=self.stream_name_response,
             ShardId=shard_id,
-            ShardIteratorType='TRIM_HORIZON',
+            ShardIteratorType='AT_TIMESTAMP',
+            Timestamp=datetime_insert,
         )
         next_iterator = shard_iterator['ShardIterator']
 
         while True:
             try:
-                response = kinesis_client.get_records(
-                    ShardIterator=next_iterator, Limit=1
-                )
+                response = client.get_records(ShardIterator=next_iterator)
 
                 records = response['Records']
 
                 if records:
-                    data = json.loads(records[0].get("Data").decode())
-                    logging.info(f'Producer: {str(data)}')
-                    if data and data['uuid'] == uid:
-                        return data['body']
+                    for record in records:
+                        data = json.loads(record.get("Data").decode())
+                        if data and data['uuid'] == uid:
+                            logging.info(f'Producer: {str(data)}')
+                            return data['body']
 
                 next_iterator = response['NextShardIterator']
-            except ProvisionedThroughputExceededException:
+            except client.exceptions.ProvisionedThroughputExceededException:
                 time.sleep(1)
 
     @staticmethod
@@ -80,10 +80,10 @@ class Producer:
         input_data = dict_to_json(data)
         partition_key = '{}-{}'.format(
             stream_name,
-            str(datetime.now().isoformat() + 'Z').replace(' ', '-'),
+            str(dt.datetime.now().isoformat() + 'Z').replace(' ', '-'),
         )
 
-        kinesis_client.put_record(
+        client.put_record(
             StreamName=stream_name, Data=input_data, PartitionKey=partition_key
         )
 
