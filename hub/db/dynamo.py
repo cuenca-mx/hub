@@ -29,6 +29,10 @@ def create_table():
             {'AttributeName': 'uuid', 'AttributeType': 'S'},
             {'AttributeName': 'ttl', 'AttributeType': 'N'},
         ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 30,
+            'WriteCapacityUnits': 30,
+        },
     )
 
 
