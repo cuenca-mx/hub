@@ -8,7 +8,7 @@ import timeout_decorator
 from boto.kinesis.exceptions import ProvisionedThroughputExceededException
 
 from hub.client import kinesis_client
-from hub.kinesis.helpers import create_stream, stream_is_active
+from hub.kinesis.helpers import create_stream, dict_to_json, stream_is_active
 
 
 class Producer:
@@ -73,8 +73,8 @@ class Producer:
                 time.sleep(1)
 
     @staticmethod
-    def put_data(data: object, stream_name: str) -> bool:
-        input_data = json.dumps(data)
+    def put_data(data: dict, stream_name: str) -> bool:
+        input_data = dict_to_json(data)
         partition_key = '{}-{}'.format(
             stream_name,
             str(datetime.now().isoformat() + 'Z').replace(' ', '-'),
