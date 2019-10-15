@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 from typing import Callable
 
@@ -50,6 +51,7 @@ class Listener:
 
                 if records:
                     data = json.loads(records[0].get("Data").decode())
+                    logging.info(f'Listener: {str(data)}')
                     resp = self.process_func(data)
                     if resp:
                         Producer.put_data(resp, self.stream_name_response)
