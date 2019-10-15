@@ -65,8 +65,10 @@ class Producer:
 
                 if records:
                     data = json.loads(records[0].get("Data").decode())
-                    if data['uuid'] == uid:
+                    if data and data['uuid'] == uid:
                         return data['body']
+
+                next_iterator = response['NextShardIterator']
             except ProvisionedThroughputExceededException:
                 time.sleep(1)
 
