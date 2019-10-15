@@ -3,12 +3,7 @@ import logging
 import time
 from typing import Callable
 
-from boto.kinesis.exceptions import (
-    ExpiredIteratorException,
-    ProvisionedThroughputExceededException,
-)
-
-from hub.client import kinesis_client
+from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
 
@@ -28,11 +23,11 @@ class Listener:
             create_stream(self.stream_name_request)
 
     def run(self):
-        stream_info = kinesis_client.describe_stream(
+        stream_info = client.describe_stream(
             StreamName=self.stream_name_request
         )
         shard_id = stream_info['StreamDescription']['Shards'][0]['ShardId']
-        shard_iterator = kinesis_client.get_shard_iterator(
+        shard_iterator = client.get_shard_iterator(
             StreamName=self.stream_name_request,
             ShardId=shard_id,
             ShardIteratorType='TRIM_HORIZON',
@@ -43,7 +38,7 @@ class Listener:
         index = 0
         while not self.tries or index < self.tries:
             try:
-                response = kinesis_client.get_records(
+                response = client.get_records(
                     ShardIterator=next_iterator, Limit=1
                 )
 
@@ -59,10 +54,10 @@ class Listener:
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
                     index += 1
-            except ProvisionedThroughputExceededException:
+            except client.exceptions.ProvisionedThroughputExceededException:
                 time.sleep(1)
-            except ExpiredIteratorException:
-                next_iterator = kinesis_client.get_shard_iterator(
+            except client.exceptions.ExpiredIteratorException:
+                next_iterator = client.get_shard_iterator(
                     StreamName=self.stream_name_request,
                     ShardId=shard_id,
                     ShardIteratorType='TRIM_HORIZON',
