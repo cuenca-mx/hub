@@ -2,7 +2,10 @@ import json
 import time
 from typing import Callable
 
-from boto.kinesis.exceptions import ProvisionedThroughputExceededException
+from boto.kinesis.exceptions import (
+    ExpiredIteratorException,
+    ProvisionedThroughputExceededException,
+)
 
 from hub.client import kinesis_client
 from hub.kinesis.helpers import create_stream, stream_is_active
@@ -55,3 +58,9 @@ class Listener:
                     index += 1
             except ProvisionedThroughputExceededException:
                 time.sleep(1)
+            except ExpiredIteratorException:
+                next_iterator = kinesis_client.get_shard_iterator(
+                    StreamName=self.stream_name_request,
+                    ShardId=shard_id,
+                    ShardIteratorType='TRIM_HORIZON',
+                )

@@ -25,14 +25,22 @@ def create_table():
     dynamo_client.create_table(
         TableName=KINESIS_DYNAMO_TABLE,
         KeySchema=[{'AttributeName': 'uuid', 'KeyType': 'HASH'}],
-        AttributeDefinitions=[
-            {'AttributeName': 'uuid', 'AttributeType': 'S'},
-            {'AttributeName': 'ttl', 'AttributeType': 'N'},
-        ],
+        AttributeDefinitions=[{'AttributeName': 'uuid', 'AttributeType': 'S'}],
+        BillingMode='PROVISIONED',
         ProvisionedThroughput={
             'ReadCapacityUnits': 30,
             'WriteCapacityUnits': 30,
         },
+    )
+    waiter = dynamo_client.get_waiter('table_exists')
+    waiter.wait(
+        TableName=KINESIS_DYNAMO_TABLE,
+        WaiterConfig={'Delay': 1, 'MaxAttempts': 120},
+    )
+
+    dynamo_client.update_time_to_live(
+        TableName=KINESIS_DYNAMO_TABLE,
+        TimeToLiveSpecification={'Enabled': True, 'AttributeName': 'ttl'},
     )
 
 
