@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from datetime import datetime, timedelta
 from typing import Callable
 
 from hub.client import kinesis_client as client
@@ -30,7 +31,8 @@ class Listener:
         shard_iterator = client.get_shard_iterator(
             StreamName=self.stream_name_request,
             ShardId=shard_id,
-            ShardIteratorType='TRIM_HORIZON',
+            ShardIteratorType='AT_TIMESTAMP',
+            Timestamp=datetime.now() - timedelta(seconds=15),
         )
 
         next_iterator = shard_iterator['ShardIterator']
@@ -60,5 +62,6 @@ class Listener:
                 next_iterator = client.get_shard_iterator(
                     StreamName=self.stream_name_request,
                     ShardId=shard_id,
-                    ShardIteratorType='TRIM_HORIZON',
+                    ShardIteratorType='AT_TIMESTAMP',
+                    Timestamp=datetime.now() - timedelta(seconds=15),
                 )
