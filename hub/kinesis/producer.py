@@ -5,8 +5,6 @@ import time
 import uuid
 from typing import Dict
 
-import timeout_decorator
-
 from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, dict_to_json, stream_is_active
 
@@ -38,9 +36,6 @@ class Producer:
         # Wait for the response
         return self.wait_for_data(uid, datetime)
 
-    @timeout_decorator.timeout(
-        seconds=15, timeout_exception=TimeoutError, use_signals=False
-    )
     def wait_for_data(self, uid: str, datetime_insert: dt.datetime) -> Dict:
         # Get info from the stream
         stream_info = client.describe_stream(
@@ -57,6 +52,7 @@ class Producer:
         )
         next_iterator = shard_iterator['ShardIterator']
 
+        start_time = dt.datetime.utcnow()
         while True:
             try:
                 response = client.get_records(ShardIterator=next_iterator)
@@ -73,6 +69,9 @@ class Producer:
                 next_iterator = response['NextShardIterator']
             except client.exceptions.ProvisionedThroughputExceededException:
                 time.sleep(1)
+
+            if (dt.datetime.utcnow() - start_time).total_seconds() >= 15:
+                raise TimeoutError
 
     @staticmethod
     def put_data(data: dict, stream_name: str) -> bool:
