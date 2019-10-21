@@ -4,12 +4,7 @@ from setuptools import find_packages, setup
 
 version = SourceFileLoader('version', 'hub/version.py').load_module()
 
-install_requirements = [
-    'boto3>=1.9.84,<2.0',
-    'jsonpickle',
-    'timeout-decorator>=0.4.1,<0.5',
-    'boto',
-]
+install_requirements = ['boto3>=1.9.84,<2.0', 'jsonpickle', 'boto']
 
 test_requires = [
     'pytest',
