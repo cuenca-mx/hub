@@ -26,12 +26,12 @@ class Worker(object):
             uuid = data.get("uuid")
             if uuid is None:
                 raise ValueError
+            task = self.task_list.get(name_task, None)
+            # Not found task
+            if task is None:
+                return
             unique_trans = write_to_db(uuid)
             if unique_trans:
-                task = self.task_list.get(name_task, None)
-                # Not found task
-                if task is None:
-                    raise NotImplementedError
                 body = task(data.get('body'))
                 res = DataKinesis(
                     uuid=data.get("uuid"),
