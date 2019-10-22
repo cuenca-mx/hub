@@ -67,7 +67,7 @@ def test_process_records():
 
     # Task function not found
     response = w.process_records(record_missing_task)
-    assert response.get('body').get('error') == 'Task not implemented'
+    assert response is None
 
     # Malformed record
     response = w.process_records(record_malformed)
