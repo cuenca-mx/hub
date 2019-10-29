@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import time
 from datetime import datetime, timedelta
 from typing import Callable
@@ -7,6 +8,8 @@ from typing import Callable
 from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
+
+KINESIS_TIME_SLEEP = os.getenv('KINESIS_TIME_SLEEP', 1)
 
 
 class Listener:
@@ -40,24 +43,27 @@ class Listener:
         index = 0
         while not self.tries or index < self.tries:
             try:
-                response = client.get_records(
-                    ShardIterator=next_iterator, Limit=1
-                )
-
+                response = client.get_records(ShardIterator=next_iterator)
                 records = response['Records']
-
                 if records:
-                    data = json.loads(records[0].get("Data").decode())
-                    logging.info(f'Listener: {str(data)}')
-                    resp = self.process_func(data)
-                    if resp:
-                        Producer.put_data(resp, self.stream_name_response)
+                    for record in records:
+                        data = json.loads(record.get("Data").decode())
+                        logging.info(f'Listener: {str(data)}')
+                        resp = self.process_func(data)
+                        if resp:
+                            Producer.put_data(resp, self.stream_name_response)
+                else:
+                    time.sleep(KINESIS_TIME_SLEEP)
 
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
                     index += 1
-            except client.exceptions.ProvisionedThroughputExceededException:
-                time.sleep(1)
+            except (
+                client.exceptions.ProvisionedThroughputExceededException,
+                client.exceptions.ConnectTimeoutError,
+                client.exceptions.ServiceUnavailableException,
+            ):
+                time.sleep(KINESIS_TIME_SLEEP)
             except client.exceptions.ExpiredIteratorException:
                 next_iterator = client.get_shard_iterator(
                     StreamName=self.stream_name_request,
