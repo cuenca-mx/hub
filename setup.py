@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 version = SourceFileLoader('version', 'hub/version.py').load_module()
 
-install_requirements = ['boto3>=1.9.84,<2.0', 'jsonpickle', 'boto']
+install_requirements = ['boto3>=1.9.84,<2.0', 'botocore']
 
 test_requires = [
     'pytest',
@@ -13,7 +13,6 @@ test_requires = [
     'isort[pipfile]',
     'flake8',
     'moto==1.3.13',
-    'jsonpickle',
 ]
 
 with open('README.md', 'r') as f:
