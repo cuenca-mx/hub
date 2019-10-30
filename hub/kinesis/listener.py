@@ -5,11 +5,17 @@ import time
 from datetime import datetime, timedelta
 from typing import Callable
 
+from botocore.exceptions import (
+    ClientError,
+    ConnectTimeoutError,
+    ReadTimeoutError,
+)
+
 from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
 
-KINESIS_TIME_SLEEP = os.getenv('KINESIS_TIME_SLEEP', 1)
+KINESIS_TIME_SLEEP = int(os.getenv('KINESIS_TIME_SLEEP', '1'))
 
 
 class Listener:
@@ -60,8 +66,9 @@ class Listener:
                     index += 1
             except (
                 client.exceptions.ProvisionedThroughputExceededException,
-                client.exceptions.ConnectTimeoutError,
-                client.exceptions.ServiceUnavailableException,
+                ClientError,
+                ConnectTimeoutError,
+                ReadTimeoutError,
             ):
                 time.sleep(KINESIS_TIME_SLEEP)
             except client.exceptions.ExpiredIteratorException:
