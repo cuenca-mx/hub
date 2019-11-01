@@ -1,7 +1,8 @@
-import asyncio
 import json
 import logging
 import os
+import threading
+import time
 from datetime import datetime, timedelta
 from typing import Callable
 
@@ -18,8 +19,14 @@ from hub.kinesis.producer import Producer
 KINESIS_TIME_SLEEP = int(os.getenv('KINESIS_TIME_SLEEP', '1'))
 
 
-async def sleep_listener():
-    await asyncio.sleep(KINESIS_TIME_SLEEP)
+def sleep_listener() -> None:
+    def sleep() -> None:
+        time.sleep(KINESIS_TIME_SLEEP)
+
+    thread = threading.Thread(target=sleep)
+    thread.start()
+    # wait listener to wake up
+    thread.join()
 
 
 class Listener:
@@ -63,7 +70,7 @@ class Listener:
                         if resp:
                             Producer.put_data(resp, self.stream_name_response)
                 else:
-                    asyncio.run(sleep_listener())
+                    sleep_listener()
 
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
@@ -74,7 +81,8 @@ class Listener:
                 ConnectTimeoutError,
                 ReadTimeoutError,
             ):
-                asyncio.run(sleep_listener())
+                sleep_listener()
+
             except client.exceptions.ExpiredIteratorException:
                 next_iterator = client.get_shard_iterator(
                     StreamName=self.stream_name_request,
