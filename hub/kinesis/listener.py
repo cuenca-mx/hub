@@ -16,7 +16,7 @@ from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
 
-KINESIS_TIME_SLEEP = float(os.getenv('KINESIS_TIME_SLEEP', '.2'))
+KINESIS_TIME_SLEEP = float(os.getenv('KINESIS_TIME_SLEEP', '.5'))
 
 
 def sleep_listener() -> None:
@@ -70,7 +70,7 @@ class Listener:
                         if resp:
                             Producer.put_data(resp, self.stream_name_response)
                 else:
-                    time.sleep(KINESIS_TIME_SLEEP)
+                    time.sleep(.5)
 
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
@@ -90,4 +90,4 @@ class Listener:
                     ShardIteratorType='AT_TIMESTAMP',
                     Timestamp=datetime.now() - timedelta(seconds=15),
                 )
-            time.sleep(KINESIS_TIME_SLEEP)
+            time.sleep(.5)
