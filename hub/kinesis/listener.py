@@ -16,7 +16,7 @@ from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
 
-KINESIS_TIME_SLEEP = int(os.getenv('KINESIS_TIME_SLEEP', '1'))
+KINESIS_TIME_SLEEP = float(os.getenv('KINESIS_TIME_SLEEP', '.2'))
 
 
 def sleep_listener() -> None:
@@ -81,7 +81,7 @@ class Listener:
                 ConnectTimeoutError,
                 ReadTimeoutError,
             ):
-                sleep_listener()
+                pass
 
             except client.exceptions.ExpiredIteratorException:
                 next_iterator = client.get_shard_iterator(
@@ -90,3 +90,4 @@ class Listener:
                     ShardIteratorType='AT_TIMESTAMP',
                     Timestamp=datetime.now() - timedelta(seconds=15),
                 )
+            sleep_listener()
