@@ -70,7 +70,7 @@ class Listener:
                         if resp:
                             Producer.put_data(resp, self.stream_name_response)
                 else:
-                    sleep_listener()
+                    time.sleep(KINESIS_TIME_SLEEP)
 
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
@@ -90,4 +90,4 @@ class Listener:
                     ShardIteratorType='AT_TIMESTAMP',
                     Timestamp=datetime.now() - timedelta(seconds=15),
                 )
-            sleep_listener()
+            time.sleep(KINESIS_TIME_SLEEP)
