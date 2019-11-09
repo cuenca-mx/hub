@@ -1,13 +1,13 @@
 import json
 import logging
 import os
-import threading
 import time
 from datetime import datetime, timedelta
 from typing import Callable
 
 from botocore.exceptions import (
     ClientError,
+    ConnectionClosedError,
     ConnectTimeoutError,
     ReadTimeoutError,
 )
@@ -16,17 +16,7 @@ from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, stream_is_active
 from hub.kinesis.producer import Producer
 
-KINESIS_TIME_SLEEP = int(os.getenv('KINESIS_TIME_SLEEP', '1'))
-
-
-def sleep_listener() -> None:
-    def sleep() -> None:
-        time.sleep(KINESIS_TIME_SLEEP)
-
-    thread = threading.Thread(target=sleep)
-    thread.start()
-    # wait listener to wake up
-    thread.join()
+KINESIS_TIME_SLEEP = float(os.getenv('KINESIS_TIME_SLEEP', '.3'))
 
 
 class Listener:
@@ -69,8 +59,6 @@ class Listener:
                         resp = self.process_func(data)
                         if resp:
                             Producer.put_data(resp, self.stream_name_response)
-                else:
-                    sleep_listener()
 
                 next_iterator = response['NextShardIterator']
                 if self.tries is not None:
@@ -80,8 +68,9 @@ class Listener:
                 ClientError,
                 ConnectTimeoutError,
                 ReadTimeoutError,
+                ConnectionClosedError,
             ):
-                sleep_listener()
+                pass
 
             except client.exceptions.ExpiredIteratorException:
                 next_iterator = client.get_shard_iterator(
@@ -90,3 +79,4 @@ class Listener:
                     ShardIteratorType='AT_TIMESTAMP',
                     Timestamp=datetime.now() - timedelta(seconds=15),
                 )
+            time.sleep(KINESIS_TIME_SLEEP)
