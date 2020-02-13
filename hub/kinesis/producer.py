@@ -1,12 +1,15 @@
 import datetime as dt
 import json
 import logging
+import os
 import time
 import uuid
 from typing import Dict
 
 from hub.client import kinesis_client as client
 from hub.kinesis.helpers import create_stream, dict_to_json, stream_is_active
+
+KINESIS_TIME_OUT = int(os.getenv('KINESIS_TIME_OUT', '5'))
 
 
 class Producer:
@@ -70,7 +73,9 @@ class Producer:
             except client.exceptions.ProvisionedThroughputExceededException:
                 time.sleep(1)
 
-            if (dt.datetime.utcnow() - start_time).total_seconds() >= 15:
+            if (
+                dt.datetime.utcnow() - start_time
+            ).total_seconds() >= KINESIS_TIME_OUT:
                 raise TimeoutError
 
     @staticmethod

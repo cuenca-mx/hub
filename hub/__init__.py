@@ -14,4 +14,4 @@ from hub.workers import (  # noqa: Import Workers
     init_workers,
 )
 
-logging.basicConfig(level=logging.INFO, format='Hub: %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
